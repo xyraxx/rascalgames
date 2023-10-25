@@ -10,6 +10,9 @@ import android.webkit.WebViewClient
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import app.win11.rascalriches.databinding.ActivityPolicyBinding
+import com.facebook.FacebookSdk
+import com.facebook.FacebookSdk.setAdvertiserIDCollectionEnabled
+import com.facebook.FacebookSdk.setAutoLogAppEventsEnabled
 
 class PolicyActivity : AppCompatActivity() {
 
@@ -44,12 +47,20 @@ class PolicyActivity : AppCompatActivity() {
                 "Agree"
             ) { dialogInterface: DialogInterface, _: Int ->
                 pref.edit().putBoolean("permitSendData", true).apply()
+                FacebookSdk.setAutoInitEnabled(true)
+                FacebookSdk.fullyInitialize()
+                setAutoLogAppEventsEnabled(true);
+                setAdvertiserIDCollectionEnabled(true);
                 dialogInterface.dismiss()
             }
             consentDialog!!.setNegativeButton(
                 "Disagree"
             ) { dialogInterface: DialogInterface, _: Int ->
                 pref.edit().putBoolean("permitSendData", false).apply()
+                FacebookSdk.setAutoInitEnabled(false)
+                FacebookSdk.fullyInitialize()
+                setAutoLogAppEventsEnabled(false);
+                setAdvertiserIDCollectionEnabled(false);
                 dialogInterface.dismiss()
             }
 

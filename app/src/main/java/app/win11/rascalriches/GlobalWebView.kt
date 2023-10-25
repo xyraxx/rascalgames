@@ -2,11 +2,19 @@ package app.win11.rascalriches
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.util.AttributeSet
+import android.webkit.JavascriptInterface
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.content.ContextCompat.startActivity
+import org.json.JSONException
+import org.json.JSONObject
+import java.security.AccessController.getContext
+
 
 @SuppressLint("SetJavaScriptEnabled")
 class GlobalWebView  @JvmOverloads constructor(
@@ -30,6 +38,8 @@ class GlobalWebView  @JvmOverloads constructor(
         webSettings.javaScriptCanOpenWindowsAutomatically = true
 
         webViewClient = CustomWebClient()
+
+        addJavascriptInterface(JSInterface(), "jsBridge")
     }
 
     private inner class CustomWebClient : WebViewClient() {
@@ -58,6 +68,35 @@ class GlobalWebView  @JvmOverloads constructor(
                     """.trimIndent()
                 ) { }
             }, 5000)
+        }
+
+        override fun onPageFinished(view: WebView, url: String?) {
+            super.onPageFinished(view, url)
+            Handler().postDelayed({
+                view.evaluateJavascript(
+                    "(function() { document.getElementById('suggest-download-h5_top').innerHTML = ''; document.getElementById('headerWrap').style = 'position:fixed; top:0px; width:100%';})();"
+                ) { _: String? -> }
+            }, 1800)
+        }
+    }
+
+    private inner class JSInterface {
+        @JavascriptInterface
+        fun postMessage(name: String, data: String) {
+            val eventValue: MutableMap<String, Any> = HashMap()
+            if ("openWindow" == name) {
+                try {
+                    val extLink = JSONObject(data)
+                    val newWindow = Intent(Intent.ACTION_VIEW)
+                    newWindow.data = Uri.parse(extLink.getString("url"))
+                    newWindow.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(newWindow)
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            } else {
+                eventValue[name] = data
+            }
         }
     }
 }

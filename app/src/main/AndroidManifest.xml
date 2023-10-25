@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:hardwareAccelerated="true">
 
+    <queries>
+        <provider android:authorities="com.facebook.katana.provider.PlatformProvider" />
+        <provider android:authorities="com.facebook.orca.provider.PlatformProvider" />
+    </queries>
+
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
@@ -39,6 +44,19 @@
         android:theme="@style/Theme.RascalRiches"
         tools:targetApi="31">
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_id"/>
+        <meta-data android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
+            android:value="false"/>
+
+        <meta-data android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
+            android:value="false"/>
+
+        <meta-data android:name="com.facebook.sdk.AutoInitEnabled"
+            android:value="false"/>
+
         <activity
             android:name=".PolicyActivity"
             android:exported="false" />
@@ -54,6 +72,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider android:authorities="com.facebook.app.FacebookContentProvider678744980653220"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>
